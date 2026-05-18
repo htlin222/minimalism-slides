@@ -1,0 +1,9 @@
+name = "slides-router"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# Bind the subdomain to this worker as a Workers Custom Domain.
+# Replace with your apex. Requires the zone to be on Cloudflare.
+[[routes]]
+pattern = "slides.yourdomain.com"
+custom_domain = true

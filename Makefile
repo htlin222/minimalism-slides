@@ -4,12 +4,17 @@
 #                  fires beforeprint so auto-fit runs)
 #   make serve  →  http://localhost:8000 for live preview
 #   make watch  →  rebuild slides.pdf on save (needs `watchexec`)
-#   make clean  →  remove the generated PDF
+#   make dist   →  build dist/ with just the deck files for deploy
+#   make page   →  deploy dist/ to Cloudflare Pages (slug/project from slides.json)
+#   make worker →  deploy worker.js (path-based router for slides.hsiehting.com)
+#   make clean  →  remove slides.pdf and dist/
 
 PDF       := slides.pdf
 SRC_DIR   := $(CURDIR)
 INDEX     := index.html
 DEPS      := index.html styles.css slides.js
+CONFIG    := slides.json
+DIST      := dist
 
 # Find a Chrome / Chromium binary on macOS or Linux.
 # Override with `make pdf CHROME=/path/to/chrome` if needed.
@@ -24,7 +29,7 @@ CHROME ?= $(shell \
 		echo chrome; \
 	fi)
 
-.PHONY: all pdf serve watch clean
+.PHONY: all pdf serve watch dist page worker clean
 
 all: pdf
 
@@ -55,5 +60,30 @@ watch:
 	@command -v watchexec >/dev/null 2>&1 || { echo "Install watchexec first (brew install watchexec)"; exit 1; }
 	watchexec -e html,css,js -- $(MAKE) pdf
 
+dist: $(DEPS) $(CONFIG)
+	@command -v jq >/dev/null 2>&1 || { echo "Install jq first (brew install jq)"; exit 1; }
+	@[ -f $(CONFIG) ] || { echo "Missing $(CONFIG)"; exit 1; }
+	@rm -rf $(DIST)
+	@mkdir -p $(DIST)
+	@cp -- $(DEPS) $(DIST)/
+	@echo "Built $(DIST)/ (slug: $$(jq -r .slug $(CONFIG)))"
+
+page: dist
+	@command -v wrangler >/dev/null 2>&1 || { echo "Install wrangler first: npm i -g wrangler"; exit 1; }
+	@SLUG=$$(jq -r .slug $(CONFIG)); \
+	PROJECT=$$(jq -r .project $(CONFIG)); \
+	DOMAIN=$$(jq -r .domain $(CONFIG)); \
+	BRANCH=$$(jq -r '.branch // "main"' $(CONFIG)); \
+	wrangler pages project create $$PROJECT --production-branch=$$BRANCH >/dev/null 2>&1 || true; \
+	echo "Deploying $(DIST)/ to Cloudflare Pages project '$$PROJECT' (branch: $$BRANCH)"; \
+	wrangler pages deploy $(DIST) --project-name=$$PROJECT --branch=$$BRANCH --commit-dirty=true && \
+	echo "" && \
+	echo "Live at:  https://$$DOMAIN/$$SLUG/"
+
+worker: worker.js worker.toml
+	@command -v wrangler >/dev/null 2>&1 || { echo "Install wrangler first: npm i -g wrangler"; exit 1; }
+	wrangler deploy --config worker.toml
+
 clean:
 	@command -v rip >/dev/null 2>&1 && rip -f $(PDF) || rm -f $(PDF)
+	@rm -rf $(DIST)
