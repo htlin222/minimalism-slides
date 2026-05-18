@@ -13,3 +13,6 @@ dist/
 # Deploy configs hold a personal domain — track only the .example.* templates.
 slides.json
 worker.toml
+
+# Preview intermediates (only preview.png is kept)
+preview-page-*.png
