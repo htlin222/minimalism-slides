@@ -1,0 +1,4 @@
+# Re-include HTML — global gitignore excludes *.html by default
+!*.html
+
+.DS_Store
