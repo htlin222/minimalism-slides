@@ -8,7 +8,17 @@ A self-contained presentation deck — pure HTML, CSS, JS. No build step, no fra
 
 Or serve over HTTP if you prefer:
 
-    python3 -m http.server 8000
+    make serve            # python3 -m http.server 8000
+
+## Export to PDF
+
+    make pdf              # slides.pdf via headless Chrome
+    make watch            # rebuild on save (needs watchexec)
+    make clean            # remove slides.pdf
+
+The Makefile shells out to headless Chrome with `--print-to-pdf`, which fires
+`beforeprint` and respects the `@page { size: 13.333in 7.5in }` rule, so the
+PDF matches the on-screen 16:9 layout with auto-fit applied per slide.
 
 ## Controls
 

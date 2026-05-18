@@ -52,6 +52,29 @@
 	if (chapters.length)
 		document.body.insertBefore(nav, document.body.firstChild);
 
+	const outlineSection = document.querySelector("section.outline");
+	if (outlineSection) {
+		outlineSection.innerHTML = "";
+		const grid = document.createElement("div");
+		grid.className = "outline-grid";
+		const label = document.createElement("div");
+		label.className = "outline-label";
+		label.textContent = "OUTLINE";
+		grid.appendChild(label);
+		const list = document.createElement("ol");
+		list.className = "outline-list";
+		chapters.slice(1).forEach((c) => {
+			const li = document.createElement("li");
+			const a = document.createElement("a");
+			a.href = `#/${c.idx + 1}`;
+			a.textContent = c.title;
+			li.appendChild(a);
+			list.appendChild(li);
+		});
+		grid.appendChild(list);
+		outlineSection.appendChild(grid);
+	}
+
 	const navLinks = [...nav.querySelectorAll("a")];
 	const activeChapterIdx = () => {
 		let active = chapters.length ? chapters[0].idx : -1;
