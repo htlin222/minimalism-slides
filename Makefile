@@ -7,7 +7,8 @@
 #   make dist   →  build dist/ with just the deck files for deploy
 #   make page   →  deploy dist/ to Cloudflare Pages (slug/project from slides.json)
 #   make worker →  deploy worker.js (path-based router for slides.hsiehting.com)
-#   make clean  →  remove slides.pdf and dist/
+#   make preview→  preview.png — 3x3 thumbnail grid of slides 1-9 (for README)
+#   make clean  →  remove slides.pdf, dist/, preview.png
 
 PDF       := slides.pdf
 SRC_DIR   := $(CURDIR)
@@ -29,7 +30,7 @@ CHROME ?= $(shell \
 		echo chrome; \
 	fi)
 
-.PHONY: all pdf serve watch dist page worker clean
+.PHONY: all pdf serve watch dist page worker preview clean
 
 all: pdf
 
@@ -84,6 +85,14 @@ worker: worker.js worker.toml
 	@command -v wrangler >/dev/null 2>&1 || { echo "Install wrangler first: npm i -g wrangler"; exit 1; }
 	wrangler deploy --config worker.toml
 
+preview: $(PDF)
+	@command -v pdftocairo >/dev/null 2>&1 || { echo "Install poppler first (brew install poppler)"; exit 1; }
+	@command -v montage >/dev/null 2>&1 || { echo "Install imagemagick first (brew install imagemagick)"; exit 1; }
+	pdftocairo -png -scale-to 800 -f 1 -l 9 $(PDF) preview-page
+	montage preview-page-*.png -tile 3x3 -geometry 500x+6+6 -background "#fff" preview.png
+	@rm -f preview-page-*.png
+	@echo "Wrote preview.png ($$(du -h preview.png | cut -f1))"
+
 clean:
-	@command -v rip >/dev/null 2>&1 && rip -f $(PDF) || rm -f $(PDF)
+	@command -v rip >/dev/null 2>&1 && rip -f $(PDF) preview.png 2>/dev/null || rm -f $(PDF) preview.png
 	@rm -rf $(DIST)

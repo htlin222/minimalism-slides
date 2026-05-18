@@ -4,6 +4,8 @@ A self-contained presentation deck — pure HTML, CSS, JS. No build step, no fra
 
 **Live demo:** [slides.hsiehting.com/minimalism-slides/](https://slides.hsiehting.com/minimalism-slides/#/1)
 
+![Preview — 3×3 grid of slides 1–9](preview.png)
+
 ## Open
 
     open index.html
@@ -107,12 +109,13 @@ To add a slide, drop a new `<section>` into `index.html`. No registration step.
     index.html       markup — one <section> per slide
     styles.css       typography, layout, overview grid, print rules
     slides.js        navigation, hash routing, swipe, auto-fit, outline injection
+    preview.png            3×3 thumbnail grid (regenerate via `make preview`)
     slides.example.json    template — copy to slides.json before deploying
     worker.example.toml    template — copy to worker.toml before deploying
     worker.js              Cloudflare Worker — path router for your apex
     slides.json            (gitignored) actual deploy config
     worker.toml            (gitignored) actual wrangler config
-    Makefile         make pdf / serve / watch / dist / page / worker / clean
+    Makefile         make pdf / serve / watch / dist / page / worker / preview / clean
     CLAUDE.md        directs future Claude sessions to the design skill
     .claude/skills/
       slides-design/
