@@ -6,7 +6,7 @@
   <title>Minimalism Slides</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;600;700&display=swap">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -19,6 +19,7 @@
     <section>
       <h1>Part One</h1>
       <h6>fundamentals</h6>
+      <footer>Vignelli M. The Vignelli Canon. Lars Müller Publishers; 2010.</footer>
     </section>
 
     <section>
@@ -29,12 +30,14 @@
         <li>Three values — black, gray, white</li>
         <li>Two heading levels — h1 chapters, h2 slides</li>
       </ul>
+      <footer>Vignelli M. The Vignelli Canon. Lars Müller Publishers; 2010:14-21.</footer>
     </section>
 
     <section>
       <h2>What we remove</h2>
       <h6>negative space is the design</h6>
       <p>No logos, no slide footers, no decorative rules, no shadows, no gradients, no transitions. A page number and a progress bar are the only persistent chrome. Everything else must earn its place in the content.</p>
+      <footer>Rams D. Ten Principles for Good Design. Vitsœ; 1980.</footer>
     </section>
 
     <section>
@@ -46,6 +49,7 @@ font:    Roboto Mono, weights 300 / 400 / 500
 ink:     #111 on #fff
 rule:    #999  (1px)
 muted:   #666</code></pre>
+      <footer>Müller-Brockmann J. Grid Systems in Graphic Design. 4th ed. Verlag Niggli AG; 1996.</footer>
     </section>
 
     <section>
@@ -55,6 +59,21 @@ muted:   #666</code></pre>
         <p>Less, but better — because it concentrates on the essential aspects, and the products are not burdened with non-essentials.</p>
         <cite>Dieter Rams</cite>
       </blockquote>
+      <footer>Rams D. Less but better. Jo Klatt Design+Design Verlag; 1995:7.</footer>
+    </section>
+
+    <section>
+      <h2>Callouts</h2>
+      <h6>asides without chrome</h6>
+      <aside class="callout">
+        <span class="callout-label">Note</span>
+        <p>Callouts are bracketed by hairline rules above and below, with an uppercase label inline before the first sentence. No background fill, no icons, no color — only typography and rule weight.</p>
+      </aside>
+      <aside class="callout warn">
+        <span class="callout-label">Warn</span>
+        <p>Use sparingly. A deck with three callouts feels punctuated; a deck with thirty feels like a manual. When in doubt, leave it as body text.</p>
+      </aside>
+      <footer>Iverson C, Christiansen S, Flanagin A, et al. AMA Manual of Style. 11th ed. Oxford University Press; 2020.</footer>
     </section>
 
     <section>
@@ -62,7 +81,7 @@ muted:   #666</code></pre>
       <h6>compare, contrast</h6>
       <div class="cols">
         <div>
-          <h6>Kept</h6>
+          <h5>Kept</h5>
           <ul>
             <li>Page number</li>
             <li>Progress bar</li>
@@ -70,7 +89,7 @@ muted:   #666</code></pre>
           </ul>
         </div>
         <div>
-          <h6>Removed</h6>
+          <h5>Removed</h5>
           <ul>
             <li>Theme toggle</li>
             <li>Transitions</li>
@@ -78,15 +97,132 @@ muted:   #666</code></pre>
           </ul>
         </div>
       </div>
+      <footer>Bringhurst R. The Elements of Typographic Style. 4th ed. Hartley &amp; Marks; 2013:175-190.</footer>
+    </section>
+
+    <section>
+      <h2>The type scale</h2>
+      <h6>one master, every rem follows</h6>
+      <table>
+        <thead>
+          <tr>
+            <th>screen</th>
+            <th class="num">1 rem</th>
+            <th class="num">h1 · 2 rem</th>
+            <th class="num">h2 · 1.8 rem</th>
+            <th class="num">page no.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1366 × 768</td>
+            <td class="num">28 px</td>
+            <td class="num">56 px</td>
+            <td class="num">50 px</td>
+            <td class="num">14 px</td>
+          </tr>
+          <tr>
+            <td>1920 × 1080</td>
+            <td class="num">39 px</td>
+            <td class="num">78 px</td>
+            <td class="num">70 px</td>
+            <td class="num">19 px</td>
+          </tr>
+          <tr>
+            <td>2560 × 1440</td>
+            <td class="num">52 px</td>
+            <td class="num">104 px</td>
+            <td class="num">93 px</td>
+            <td class="num">26 px</td>
+          </tr>
+          <tr>
+            <td>3840 × 2160</td>
+            <td class="num">78 px</td>
+            <td class="num">156 px</td>
+            <td class="num">140 px</td>
+            <td class="num">39 px</td>
+          </tr>
+        </tbody>
+        <caption>html { font-size: max(28px, 3.6vmin) } — single source for the whole deck.</caption>
+      </table>
+      <footer>Müller-Brockmann J. Grid Systems in Graphic Design. 4th ed. Verlag Niggli AG; 1996.</footer>
+    </section>
+
+    <section>
+      <h2>Density test</h2>
+      <h6>auto-fit shrinks body type when content overflows</h6>
+      <table>
+        <thead>
+          <tr>
+            <th class="num">#</th>
+            <th>Principle</th>
+            <th>Why</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="num">01</td><td>Good design is innovative</td><td>Innovation moves in step with technology</td></tr>
+          <tr><td class="num">02</td><td>Good design makes a product useful</td><td>Function precedes decoration</td></tr>
+          <tr><td class="num">03</td><td>Good design is aesthetic</td><td>Beauty matters because the product is used daily</td></tr>
+          <tr><td class="num">04</td><td>Good design makes a product understandable</td><td>Clarity reveals the product's structure</td></tr>
+          <tr><td class="num">05</td><td>Good design is unobtrusive</td><td>Tools, neither decorative nor artistic</td></tr>
+          <tr><td class="num">06</td><td>Good design is honest</td><td>It does not deceive about its capabilities</td></tr>
+          <tr><td class="num">07</td><td>Good design is long-lasting</td><td>Avoids fashion, stays current for years</td></tr>
+          <tr><td class="num">08</td><td>Good design is thorough down to the last detail</td><td>Nothing arbitrary, everything intentional</td></tr>
+          <tr><td class="num">09</td><td>Good design is environmentally friendly</td><td>Conserves resources, minimises pollution</td></tr>
+          <tr><td class="num">10</td><td>Good design is as little design as possible</td><td>Less, but better</td></tr>
+        </tbody>
+        <caption>Rams' principles — restated to test how aggressively auto-fit can scale the body.</caption>
+      </table>
+      <footer>Rams D. Ten Principles for Good Design. Vitsœ; 1980.</footer>
+    </section>
+
+    <section>
+      <h2>Density test, list</h2>
+      <h6>auto-fit also handles long lists</h6>
+      <ul>
+        <li>No theme switcher</li>
+        <li>No build step</li>
+        <li>No bundler, no framework</li>
+        <li>No state management library</li>
+        <li>No SSR, no SSG</li>
+        <li>No analytics, no telemetry</li>
+        <li>No service worker</li>
+        <li>No self-hosted fonts</li>
+        <li>No images, no icons, no logos</li>
+        <li>No gradients, no shadows, no fills</li>
+        <li>No animations between slides</li>
+        <li>No multiple typefaces</li>
+        <li>No backgrounds beyond #fff</li>
+        <li>No weights below 300 or above 700</li>
+        <li>No alignment changes per slide</li>
+        <li>No speaker notes</li>
+        <li>No print overrides for the page number</li>
+        <li>No shortcut docs outside this deck</li>
+        <li>No JavaScript polyfills</li>
+        <li>No IE support</li>
+      </ul>
+      <footer>Vignelli M. The Vignelli Canon. Lars Müller Publishers; 2010:34-41.</footer>
     </section>
 
     <section>
       <h1>Part Two</h1>
       <h6>operating it</h6>
+      <footer>Norman D. The Design of Everyday Things. Revised ed. Basic Books; 2013.</footer>
     </section>
 
     <section>
-      <h2>Keyboard</h2>
+      <h2>Inputs</h2>
+      <h6>three ways in</h6>
+      <ul>
+        <li>Keyboard — primary, every action is bound</li>
+        <li>Pointer — clicks, scroll wheel, mouse</li>
+        <li>Touch — swipe left or right on mobile</li>
+      </ul>
+      <footer>Norman D. The Design of Everyday Things. Revised ed. Basic Books; 2013.</footer>
+    </section>
+
+    <section>
+      <h3>Keyboard</h3>
       <h6>everything from the keys</h6>
       <dl>
         <dt>→  ↓  PgDn  Space</dt><dd>Next slide</dd>
@@ -95,11 +231,13 @@ muted:   #666</code></pre>
         <dt>o  /  Esc</dt><dd>Toggle overview</dd>
         <dt>Cmd/Ctrl + P</dt><dd>Print one slide per page</dd>
       </dl>
+      <footer>Norman D. The Design of Everyday Things. Revised ed. Basic Books; 2013:51-67.</footer>
     </section>
 
     <section>
       <h1>End</h1>
       <h6>thank you</h6>
+      <footer>Lin H. Minimalism Slides. Published 2026.</footer>
     </section>
   </main>
 
