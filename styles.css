@@ -828,6 +828,27 @@ body.overtime #timer-reset:hover { background: var(--bg); color: var(--ink); }
   font-style: italic;
 }
 
+#presenter-nav {
+  display: flex;
+  gap: 0.5em;
+  padding-top: 1vh;
+  flex-shrink: 0;
+}
+#presenter-nav button {
+  flex: 1;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  padding: 0.5em 0;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+}
+#presenter-nav button:hover  { background: var(--ink); color: var(--bg); }
+#presenter-nav button:active { opacity: 0.7; }
+
 /* Mobile presenter view — current slide on top, notes below.
    Timer and next-slide preview are hidden because there's no room. */
 @media (max-width: 768px) {

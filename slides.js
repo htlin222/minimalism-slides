@@ -199,10 +199,19 @@ async function presenterMode() {
 		},
 	});
 
-	const sendAndStart = (msg) => {
+	// Move locally first, then broadcast if WS is live.
+	const navigate = (delta, abs) => {
 		timer.start();
-		conn.send(msg);
+		if (abs !== null) deck.setCurrent(abs);
+		else deck.go(delta);
+		updateNotesAndPreview(deck);
+		if (conn.isConnected()) {
+			conn.send(abs !== null ? { type: "jump", index: abs } : { type: "go", delta });
+		}
 	};
+
+	document.querySelector("#presenter-prev")?.addEventListener("click", () => navigate(-1, null));
+	document.querySelector("#presenter-next")?.addEventListener("click", () => navigate(+1, null));
 
 	window.addEventListener("keydown", (e) => {
 		if (e.target.matches("input, textarea, [contenteditable]")) return;
@@ -220,9 +229,7 @@ async function presenterMode() {
 			default: return;
 		}
 		e.preventDefault();
-		if (!conn.isConnected()) return;
-		if (abs !== null) sendAndStart({ type: "jump", index: abs });
-		else sendAndStart({ type: "go", delta });
+		navigate(delta, abs);
 	});
 
 	let startX = 0, startY = 0, tracking = false;
@@ -233,23 +240,20 @@ async function presenterMode() {
 	window.addEventListener("pointerup", (e) => {
 		if (!tracking) return;
 		tracking = false;
-		if (!conn.isConnected()) return;
 		const dx = e.clientX - startX;
 		const dy = e.clientY - startY;
 		if (Math.abs(dx) < 50 || Math.abs(dy) > Math.abs(dx)) return;
-		sendAndStart({ type: "go", delta: dx < 0 ? +1 : -1 });
+		navigate(dx < 0 ? +1 : -1, null);
 	});
 
 	// Tap-to-advance: click left half of the deck = prev, right half = next.
-	// Lets you drive the deck by tapping the slide area on mobile / trackpad.
 	const deckEl = document.querySelector("#deck");
 	if (deckEl) {
 		deckEl.addEventListener("click", (e) => {
-			if (e.target.closest("a, button, input")) return; // let real links/buttons fire
-			if (!conn.isConnected()) return;
+			if (e.target.closest("a, button, input")) return;
 			const rect = deckEl.getBoundingClientRect();
 			const mid = rect.left + rect.width / 2;
-			sendAndStart({ type: "go", delta: e.clientX < mid ? -1 : +1 });
+			navigate(e.clientX < mid ? -1 : +1, null);
 		});
 	}
 }
