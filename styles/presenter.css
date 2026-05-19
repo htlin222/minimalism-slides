@@ -24,7 +24,7 @@ body.mode-presenter #presenter-pane {
 body.mode-presenter #presenter-controls {
   display: flex;
   position: fixed;
-  top: calc(50% + 16.875vw);
+  bottom: calc(5px + 0.5em);
   left: 0;
   width: 60vw;
   z-index: 50;
@@ -71,11 +71,7 @@ body.mode-presenter #chapters {
   width: 60vw;
 }
 body.mode-presenter #chapters { right: 40vw; }
-body.mode-presenter > footer  {
-  right: 40vw;
-  bottom: auto;
-  top: calc(50% + 16.875vw - 5px);
-}
+body.mode-presenter > footer  { right: 40vw; }
 
 body.mode-presenter.overview #deck {
   width: 100%;
