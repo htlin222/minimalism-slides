@@ -18,13 +18,10 @@ export default {
 		const slug = segments[0];
 
 		if (!slug) {
-			return new Response(
-				"slides.hsiehting.com\n\npick a deck path, e.g. /minimalism-slides/",
-				{
-					status: 200,
-					headers: { "content-type": "text/plain; charset=utf-8" },
-				},
-			);
+			// Apex with no slug -> redirect to the default deck.
+			// Override via env.DEFAULT_SLUG (worker.toml [vars]) when more decks exist.
+			const defaultSlug = env.DEFAULT_SLUG || "minimalism-slides";
+			return Response.redirect(`${url.origin}/${defaultSlug}/`, 302);
 		}
 
 		// WebSocket upgrade -> Durable Object keyed by slug.
