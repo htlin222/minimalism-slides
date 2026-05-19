@@ -13,7 +13,8 @@
 PDF       := slides.pdf
 SRC_DIR   := $(CURDIR)
 INDEX     := index.html
-DEPS      := index.html styles.css slides.js core.js _redirects
+DEPS      := index.html styles.css slides.js core.js
+MODE_PAGES:= live.html presenter.html control.html
 CONFIG    := slides.json
 DIST      := dist
 
@@ -67,6 +68,7 @@ dist: $(DEPS) $(CONFIG)
 	@rm -rf $(DIST)
 	@mkdir -p $(DIST)
 	@cp -- $(DEPS) $(DIST)/
+	@for f in $(MODE_PAGES); do cp $(DIST)/index.html $(DIST)/$$f; done
 	@echo "Built $(DIST)/ (slug: $$(jq -r .slug $(CONFIG)))"
 
 page: dist
