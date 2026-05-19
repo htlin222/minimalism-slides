@@ -56,8 +56,7 @@ $(PDF): $(DEPS) $(STYLES)
 	@echo "Wrote $(PDF) ($$(du -h $(PDF) | cut -f1))"
 
 serve:
-	@echo "Serving $(SRC_DIR) at http://localhost:8000"
-	python3 -m http.server 8000
+	@python3 serve.py 8000
 
 watch:
 	@command -v watchexec >/dev/null 2>&1 || { echo "Install watchexec first (brew install watchexec)"; exit 1; }
