@@ -177,6 +177,19 @@ async function presenterMode() {
 		if (Math.abs(dx) < 50 || Math.abs(dy) > Math.abs(dx)) return;
 		sendAndStart({ type: "go", delta: dx < 0 ? +1 : -1 });
 	});
+
+	// Tap-to-advance: click left half of the deck = prev, right half = next.
+	// Lets you drive the deck by tapping the slide area on mobile / trackpad.
+	const deckEl = document.querySelector("#deck");
+	if (deckEl) {
+		deckEl.addEventListener("click", (e) => {
+			if (e.target.closest("a, button, input")) return; // let real links/buttons fire
+			if (!conn.isConnected()) return;
+			const rect = deckEl.getBoundingClientRect();
+			const mid = rect.left + rect.width / 2;
+			sendAndStart({ type: "go", delta: e.clientX < mid ? -1 : +1 });
+		});
+	}
 }
 
 // ---- Presenter pane: timer, notes, next-slide preview ------------------
