@@ -13,7 +13,7 @@
 PDF       := slides.pdf
 SRC_DIR   := $(CURDIR)
 INDEX     := index.html
-DEPS      := index.html styles.css slides.js
+DEPS      := index.html styles.css slides.js core.js _redirects
 CONFIG    := slides.json
 DIST      := dist
 

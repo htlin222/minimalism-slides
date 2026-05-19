@@ -250,6 +250,18 @@ If the floor still clips, the slide is **too dense** — split it. Two cleaner s
 - ❌ Long h1 / h2 text that wraps. Compress to 1–4 words.
 - ❌ Multiple consecutive h3 sub-sections per chapter without an h2 to anchor them.
 
+## Live / presenter / control modes
+
+The deck can also run in three real-time roles, all driven by a Cloudflare Durable Object keyed by slug:
+
+- `/<slug>/live` — audience screen, follows DO state. Read-only, no PIN.
+- `/<slug>/presenter` — speaker laptop, PIN-gated, keyboard sends commands.
+- `/<slug>/control` — phone remote, PIN-gated, minimal `←  N/total  →` UI.
+
+These are not separate HTML files — Pages serves the same `index.html` for `/live`, `/presenter`, `/control` (via `_redirects`). `slides.js` reads `location.pathname`, sets `body.dataset.mode`, and branches behaviour. Hide rules live in `styles.css` under `body.mode-control`, etc. PIN is a Worker secret (`SLIDES_PIN`), set with `wrangler secret put`. Auth detail and runbook are in the project `README.md`.
+
+When **designing slides**, no special markup is needed for live mode — the same `<section>` structure works in every role. The auto-fit pass also runs in live mode, so a slide that fits at 1080p screen will fit on the audience's screen.
+
 ## Quick decision tree
 
 ```

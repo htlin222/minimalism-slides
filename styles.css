@@ -568,6 +568,124 @@ body.overview #chapters { display: none; }
   body.cover #page-number { display: none; }
 }
 
+/* PIN prompt — full-screen overlay shown on /presenter and /control until WS welcome. */
+#pin-prompt[hidden] { display: none; }
+#pin-prompt {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#pin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: stretch;
+  width: min(70vw, 24rem);
+}
+
+#pin-form label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--rule);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+#pin-input {
+  font: inherit;
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  padding: 0.5em 0.6em;
+  border: 0;
+  border-bottom: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  text-align: center;
+  outline: none;
+}
+#pin-input:focus { border-bottom-width: 2px; }
+
+#pin-form button {
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 0.6em 1em;
+  margin-top: 0.5rem;
+  border: 1px solid var(--ink);
+  background: var(--bg);
+  color: var(--ink);
+  cursor: pointer;
+}
+#pin-form button:hover { background: var(--ink); color: var(--bg); }
+
+#pin-error {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--ink);
+  min-height: 1.2em;
+}
+
+/* Remote — control-mode minimal UI. */
+#remote[hidden] { display: none; }
+#remote {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8vw;
+}
+
+#remote button {
+  font: inherit;
+  font-size: 4rem;
+  font-weight: 400;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  padding: 0;
+  width: 22vw;
+  height: 22vw;
+  min-width: 5rem;
+  min-height: 5rem;
+  cursor: pointer;
+  border-radius: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 80ms;
+}
+#remote button:active { background: var(--ink); color: var(--bg); }
+
+#remote-counter {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums;
+}
+#remote-counter .sep { color: var(--rule); margin: 0 0.4em; font-weight: 400; }
+
+/* Mode hide rules */
+body.mode-control #deck,
+body.mode-control footer,
+body.mode-control #chapters { display: none !important; }
+
+body.mode-control:not(.connected) #remote button,
+body.mode-presenter:not(.connected):not(.mode-presenter[data-mode-pending]) #remote button {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+body.mode-live #chapters { /* keep visible — audience sees the chapter context */ }
+
 @media print {
   /* Render the PDF at virtual 1080p so screen typography (rem, vh, vw) maps 1:1.
      The PDF reader scales the page to whatever physical size it needs at print time. */

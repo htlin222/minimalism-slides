@@ -7,3 +7,14 @@ compatibility_date = "2025-01-01"
 [[routes]]
 pattern = "slides.yourdomain.com"
 custom_domain = true
+
+# Durable Object — per-slug session state for live/presenter/control sync.
+# After first deploy, set the PIN secret once:
+#     wrangler secret put SLIDES_PIN --config worker.toml
+[[durable_objects.bindings]]
+name = "SESSIONS"
+class_name = "SessionDO"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["SessionDO"]

@@ -273,6 +273,21 @@ muted:   #666</code></pre>
     <div id="progress"><div id="progress-fill"></div></div>
   </footer>
 
-  <script src="slides.js" defer></script>
+  <div id="pin-prompt" hidden>
+    <form id="pin-form">
+      <label for="pin-input">PIN</label>
+      <input id="pin-input" name="pin" type="text" inputmode="numeric" autocomplete="off" maxlength="12" autofocus>
+      <button type="submit">Connect</button>
+      <p id="pin-error"></p>
+    </form>
+  </div>
+
+  <div id="remote" hidden>
+    <button id="remote-prev" type="button" aria-label="Previous">←</button>
+    <div id="remote-counter"><span id="remote-current">01</span> <span class="sep">/</span> <span id="remote-total">—</span></div>
+    <button id="remote-next" type="button" aria-label="Next">→</button>
+  </div>
+
+  <script type="module" src="slides.js"></script>
 </body>
 </html>
