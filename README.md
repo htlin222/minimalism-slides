@@ -1,5 +1,7 @@
 # Minimalism Slides
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-black.svg)](LICENSE)
+
 A self-contained presentation deck — pure HTML, CSS, JS. No build step, no framework, no dependencies beyond Roboto Mono from Google Fonts.
 
 **Live demo:** [slides.hsiehting.com/minimalism-slides/](https://slides.hsiehting.com/minimalism-slides/#/1)
@@ -35,17 +37,25 @@ Then:
     make dist             # bundle index.html + styles.css + slides.js into dist/
     make page             # deploy dist/ to Cloudflare Pages, print live URL
 
-`slides.json` holds the deploy config:
+`slides.json` holds both the deck identity and the deploy config:
 
 ```json
 {
-  "slug": "your-slug",
-  "title": "Your Deck Title",
-  "project": "your-pages-project",
-  "domain": "slides.yourdomain.com",
-  "branch": "main"
+  "slug":        "your-slug",
+  "title":       "Your Deck Title",
+  "subtitle":    "a short phrase",
+  "author":      "Your Name",
+  "authorUrl":   "https://your-site.com/about/",
+  "affiliation": "Your Institution",
+  "email":       "you@example.com",
+  "footer":      "Author A. Your Deck Title. Published 2026.",
+  "project":     "your-pages-project",
+  "domain":      "slides.yourdomain.com",
+  "branch":      "main"
 }
 ```
+
+The identity fields (`title` through `footer`) are loaded at runtime by `slides.js` and injected into the cover slide and end-slide footer — so cloning for a new talk only requires editing `slides.json`. All fields are optional; missing ones fall back to whatever is hardcoded in `index.html`.
 
 `make page` reads `slug` / `project` / `branch` and runs:
 
@@ -177,3 +187,7 @@ To add a slide, drop a new `<section>` into `index.html`. No registration step.
       slides-design/
         SKILL.md     full layout catalog, sizing reference, anti-patterns
     .gitignore       excludes .DS_Store, *.pdf, dist/, .wrangler/
+
+## License
+
+MIT — see [LICENSE](LICENSE).
