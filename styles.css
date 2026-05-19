@@ -734,16 +734,33 @@ body.mode-presenter #presenter-pane {
 body.mode-presenter #presenter-controls {
   display: flex;
   position: fixed;
-  top: 33.75vw;
+  top: calc(50% + 16.875vw);
   left: 0;
   width: 60vw;
   z-index: 50;
   background: var(--bg);
   border-top: 1px solid var(--rule);
   border-right: 1px solid var(--rule);
-  padding: 2vh 2.5vw;
-  flex-direction: column;
-  gap: 1.5vh;
+  padding: 0.35vh 1.5vw;
+  flex-direction: row;
+  align-items: center;
+  gap: 1vw;
+  font-size: 0.55rem;
+}
+body.mode-presenter #timer {
+  font-size: inherit;
+  padding: 0;
+}
+body.mode-presenter #timer-reset {
+  font-size: inherit;
+  padding: 0.15em 0.5em;
+}
+body.mode-presenter #presenter-nav {
+  margin-left: auto;
+}
+body.mode-presenter #presenter-nav button {
+  font-size: inherit;
+  padding: 0.15em 0.8em;
 }
 
 body.mode-presenter #deck {
