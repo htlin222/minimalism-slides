@@ -292,12 +292,6 @@ muted:   #666</code></pre>
   </div>
 
   <aside id="presenter-pane" hidden>
-    <div id="timer">
-      <span id="timer-elapsed">00:00</span>
-      <span class="sep">/</span>
-      <input id="timer-target" type="text" inputmode="numeric" autocomplete="off" value="25:00" aria-label="Timer target time">
-      <button id="timer-reset" type="button" aria-label="Reset timer">R</button>
-    </div>
     <div id="next-preview-wrap">
       <div class="pane-label">next</div>
       <div id="next-preview"></div>
@@ -306,11 +300,20 @@ muted:   #666</code></pre>
       <div class="pane-label">notes</div>
       <div id="presenter-notes"></div>
     </div>
+  </aside>
+
+  <div id="presenter-controls" hidden>
+    <div id="timer">
+      <span id="timer-elapsed">00:00</span>
+      <span class="sep">/</span>
+      <input id="timer-target" type="text" inputmode="numeric" autocomplete="off" value="25:00" aria-label="Timer target time">
+      <button id="timer-reset" type="button" aria-label="Reset timer">R</button>
+    </div>
     <div id="presenter-nav">
       <button id="presenter-prev" type="button" aria-label="Previous slide">←</button>
       <button id="presenter-next" type="button" aria-label="Next slide">→</button>
     </div>
-  </aside>
+  </div>
 
   <script type="module" src="slides.js"></script>
 </body>

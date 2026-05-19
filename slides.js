@@ -391,6 +391,8 @@ function setupPresenterPane(deck) {
 	const pane = document.querySelector("#presenter-pane");
 	if (!pane) return;
 	pane.hidden = false;
+	const controls = document.querySelector("#presenter-controls");
+	if (controls) controls.hidden = false;
 	timer.mount();
 	updateNotesAndPreview(deck);
 }

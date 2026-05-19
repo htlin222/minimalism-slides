@@ -712,8 +712,9 @@ body.mode-control #chapters { display: none !important; }
 aside.notes { display: none; }
 
 /* Presenter view — classic split. Deck occupies left 60vw, right 40vw pane
-   holds timer / next preview / notes. */
+   holds next preview / notes. Timer and nav live below the deck on the left. */
 #presenter-pane[hidden] { display: none; }
+#presenter-controls[hidden] { display: none; }
 
 body.mode-presenter #presenter-pane {
   display: flex;
@@ -728,6 +729,21 @@ body.mode-presenter #presenter-pane {
   padding: 2vh 2.5vw;
   flex-direction: column;
   gap: 2vh;
+}
+
+body.mode-presenter #presenter-controls {
+  display: flex;
+  position: fixed;
+  top: 33.75vw;
+  left: 0;
+  width: 60vw;
+  z-index: 50;
+  background: var(--bg);
+  border-top: 1px solid var(--rule);
+  border-right: 1px solid var(--rule);
+  padding: 2vh 2.5vw;
+  flex-direction: column;
+  gap: 1.5vh;
 }
 
 body.mode-presenter #deck {
@@ -872,7 +888,6 @@ body.overtime #timer-reset:hover { background: var(--bg); color: var(--ink); }
 #presenter-nav {
   display: flex;
   gap: 0.5em;
-  padding-top: 1vh;
   flex-shrink: 0;
 }
 #presenter-nav button {
@@ -924,7 +939,7 @@ body.overtime #timer-reset:hover { background: var(--bg); color: var(--ink); }
     gap: 0;
   }
 
-  body.mode-presenter #timer,
+  body.mode-presenter #presenter-controls,
   body.mode-presenter #next-preview-wrap {
     display: none;
   }
