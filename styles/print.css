@@ -1,0 +1,68 @@
+/* Loaded with media="print" — every rule applies only during PDF render.
+   Render the PDF at virtual 1080p so screen typography (rem, vh, vw) maps 1:1.
+   The PDF reader scales the page to whatever physical size it needs at print time. */
+@page {
+  size: 1920px 1080px;
+  margin: 0;
+}
+
+html, body {
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  background: #fff;
+}
+
+/* The screen body footer (fixed page number + progress bar) shows ONE state.
+   For per-page numbering in print we replace it with section::after + section background gradient below. */
+body > footer { display: none; }
+
+/* #deck no longer constrains to one viewport — sections stack across pages. */
+#deck {
+  height: auto;
+  display: block;
+}
+
+/* Force every section to render at full page size, one per printed page. */
+section {
+  display: flex !important;
+  page-break-after: always;
+  break-after: page;
+  page-break-inside: avoid;
+  break-inside: avoid;
+  /* Per-page progress bar: hairline rule at 5px above bottom, fill from left to --progress. */
+  background-image:
+    linear-gradient(var(--rule), var(--rule)),
+    linear-gradient(
+      to right,
+      var(--ink) 0 var(--progress, 0%),
+      transparent var(--progress, 0%) 100%
+    );
+  background-position: 0 calc(100% - 5px), 0 100%;
+  background-size: 100% 1px, 100% 5px;
+  background-repeat: no-repeat, no-repeat;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+section:last-child {
+  page-break-after: auto;
+  break-after: auto;
+}
+
+/* Per-page page number — uses the same coords as the screen #page-number so layout is 1:1. */
+section::after {
+  content: attr(data-num) " / " attr(data-total);
+  position: absolute;
+  right: 3vw;
+  bottom: 3.5vh;
+  font-size: 0.5rem;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+/* Menubar already position:fixed via the screen rule — fixed elements repeat on every printed page.
+   Solid white background so it never visually merges into a slide with edge-to-edge content. */
+#chapters {
+  background: #fff;
+}

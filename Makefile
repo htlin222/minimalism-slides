@@ -13,7 +13,8 @@
 PDF       := slides.pdf
 SRC_DIR   := $(CURDIR)
 INDEX     := index.html
-DEPS      := index.html styles.css slides.js core.js
+DEPS      := index.html slides.js core.js
+STYLES    := $(wildcard styles/*.css)
 MODE_PAGES:= live.html presenter.html control.html
 CONFIG    := slides.json
 DIST      := dist
@@ -37,7 +38,7 @@ all: pdf
 
 pdf: $(PDF)
 
-$(PDF): $(DEPS)
+$(PDF): $(DEPS) $(STYLES)
 	@if [ -z "$(CHROME)" ]; then \
 		echo "Chrome / Chromium not found. Install Google Chrome, or run:"; \
 		echo "    make pdf CHROME=/path/to/chrome"; \
@@ -62,12 +63,13 @@ watch:
 	@command -v watchexec >/dev/null 2>&1 || { echo "Install watchexec first (brew install watchexec)"; exit 1; }
 	watchexec -e html,css,js -- $(MAKE) pdf
 
-dist: $(DEPS) $(CONFIG)
+dist: $(DEPS) $(STYLES) $(CONFIG)
 	@command -v jq >/dev/null 2>&1 || { echo "Install jq first (brew install jq)"; exit 1; }
 	@[ -f $(CONFIG) ] || { echo "Missing $(CONFIG)"; exit 1; }
 	@rm -rf $(DIST)
 	@mkdir -p $(DIST)
 	@cp -- $(DEPS) $(CONFIG) $(DIST)/
+	@cp -R styles $(DIST)/
 	@for f in $(MODE_PAGES); do cp $(DIST)/index.html $(DIST)/$$f; done
 	@echo "Built $(DIST)/ (slug: $$(jq -r .slug $(CONFIG)))"
 

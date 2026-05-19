@@ -1,0 +1,144 @@
+/* PIN prompt — full-screen overlay shown on /presenter and /control until WS welcome. */
+#pin-prompt[hidden] { display: none; }
+#pin-prompt {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#pin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: stretch;
+  width: min(70vw, 24rem);
+}
+
+#pin-form label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--rule);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+#pin-input {
+  font: inherit;
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  padding: 0.5em 0.6em;
+  border: 0;
+  border-bottom: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  text-align: center;
+  outline: none;
+}
+#pin-input:focus { border-bottom-width: 2px; }
+
+#pin-form button {
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 0.6em 1em;
+  margin-top: 0.5rem;
+  border: 1px solid var(--ink);
+  background: var(--bg);
+  color: var(--ink);
+  cursor: pointer;
+}
+#pin-form button:hover { background: var(--ink); color: var(--bg); }
+
+#pin-error {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--ink);
+  min-height: 1.2em;
+}
+
+/* Remote — control-mode minimal UI. Vertical for one-handed phone use:
+   counter on top, smaller prev button mid-upper, large next at bottom for thumb. */
+#remote[hidden] { display: none; }
+#remote {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4vh 6vw 5vh;
+  gap: 0;
+}
+
+#remote-counter {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 4vh;
+}
+#remote-counter .sep { color: var(--rule); margin: 0 0.4em; font-weight: 400; }
+
+#remote button {
+  font: inherit;
+  font-weight: 400;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 80ms, color 80ms;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+#remote button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+#remote-prev {
+  width: 55%;
+  height: 16vh;
+  font-size: max(2rem, 9vmin);
+  background: var(--ink);
+  color: var(--bg);
+  border: 1px solid var(--ink);
+}
+#remote-prev:active {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+#remote-next {
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  font-size: max(5rem, 25vmin);
+  margin-top: 3vh;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--rule);
+}
+#remote-next:active {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+/* Mode hide rules */
+body.mode-control #deck,
+body.mode-control footer,
+body.mode-control #chapters { display: none !important; }
+
+body.mode-control:not(.connected) #remote button {
+  opacity: 0.35;
+  pointer-events: none;
+}

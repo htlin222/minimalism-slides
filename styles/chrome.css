@@ -1,0 +1,79 @@
+#chapters {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 1rem 3vw 0;
+  font-size: 0.5rem;
+  pointer-events: none;
+}
+
+#chapters a:nth-child(n+3)::before {
+  content: "·";
+  color: var(--rule);
+  margin: 0 0.6em;
+  display: inline-block;
+  text-decoration: none;
+}
+
+#chapters a {
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  pointer-events: auto;
+  transition: color 100ms;
+}
+
+#chapters a:first-child {
+  margin-right: auto;
+}
+
+#chapters a:hover,
+#chapters a:focus-visible {
+  color: var(--ink);
+  outline: none;
+}
+
+#chapters a.active {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.35em;
+  text-decoration-thickness: 1px;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#page-number {
+  position: absolute;
+  right: 3vw;
+  bottom: 3.5vh;
+  font-size: 0.5rem;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+#progress {
+  height: 5px;
+  width: 100%;
+  border-top: 1px solid var(--rule);
+  background: transparent;
+}
+
+#progress-fill {
+  height: 100%;
+  width: 0;
+  background: var(--ink);
+  transition: width 120ms linear;
+}

@@ -1,0 +1,261 @@
+/* Speaker notes — hidden globally; presenter view reads textContent into the pane. */
+aside.notes { display: none; }
+
+/* Presenter view — classic split. Deck occupies left 60vw, right 40vw pane
+   holds next preview / notes. Timer and nav live below the deck on the left. */
+#presenter-pane[hidden] { display: none; }
+#presenter-controls[hidden] { display: none; }
+
+body.mode-presenter #presenter-pane {
+  display: flex;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 40vw;
+  z-index: 50;
+  background: var(--bg);
+  border-left: 1px solid var(--rule);
+  padding: 2vh 2.5vw;
+  flex-direction: column;
+  gap: 2vh;
+}
+
+body.mode-presenter #presenter-controls {
+  display: flex;
+  position: fixed;
+  top: calc(50% + 16.875vw);
+  left: 0;
+  width: 60vw;
+  z-index: 50;
+  background: var(--bg);
+  padding: 0 1.5vw;
+  flex-direction: row;
+  align-items: center;
+  gap: 1vw;
+  font-size: 0.55rem;
+}
+body.mode-presenter #timer {
+  font-size: inherit;
+  padding: 0;
+}
+body.mode-presenter #timer-reset {
+  font-size: inherit;
+  padding: 0.15em 0.5em;
+}
+body.mode-presenter #presenter-nav {
+  margin-left: auto;
+}
+body.mode-presenter #presenter-nav button {
+  font-size: inherit;
+  padding: 0.15em 0.8em;
+}
+
+body.mode-presenter #deck {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 60vw;
+  height: 33.75vw;
+  overflow: hidden;
+}
+body.mode-presenter section {
+  width: 100vw;
+  height: 56.25vw;
+  transform: scale(0.6);
+  transform-origin: top left;
+}
+body.mode-presenter > footer,
+body.mode-presenter #chapters {
+  width: 60vw;
+}
+body.mode-presenter #chapters { right: 40vw; }
+body.mode-presenter > footer  {
+  right: 40vw;
+  bottom: auto;
+  top: calc(50% + 16.875vw - 5px);
+}
+
+body.mode-presenter.overview #deck {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+body.mode-presenter.overview section {
+  width: 100%;
+  height: auto;
+  transform: none;
+}
+
+#timer {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4em;
+  font-size: 1.4rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+  padding: 0.4em 0.6em;
+}
+#timer .sep { color: var(--rule); font-weight: 400; }
+#timer-target {
+  width: 3.8em;
+  font: inherit;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  padding: 0;
+  outline: none;
+}
+#timer-target:focus { border-bottom-color: var(--rule); }
+
+#timer-reset {
+  margin-left: auto;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  padding: 0.3em 0.7em;
+  cursor: pointer;
+}
+#timer-reset:hover { background: var(--ink); color: var(--bg); }
+
+body.overtime #timer {
+  background: var(--ink);
+  color: var(--bg);
+}
+body.overtime #timer .sep,
+body.overtime #timer-target { color: var(--bg); opacity: 0.6; }
+body.overtime #timer-target:focus { border-bottom-color: var(--bg); }
+body.overtime #timer-reset { border-color: var(--bg); color: var(--bg); }
+body.overtime #timer-reset:hover { background: var(--bg); color: var(--ink); }
+
+.pane-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--rule);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.4em;
+}
+
+#next-preview-wrap { display: flex; flex-direction: column; }
+#next-preview {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--rule);
+  overflow: hidden;
+  position: relative;
+  background: var(--bg);
+}
+
+/* Cloned next-section is rendered at full viewport size, then scale-transformed
+   to fit. transform-origin top-left + container overflow:hidden = clean clip. */
+#next-preview > section.preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex !important;
+  transform: scale(0.36);
+  transform-origin: top left;
+  pointer-events: none;
+}
+#next-preview > section.preview > footer { display: none; }   /* citation noise in mini */
+#next-preview > section.preview aside.notes { display: none; }
+
+#presenter-notes-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+#presenter-notes {
+  flex: 1;
+  overflow-y: auto;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--ink);
+  white-space: pre-wrap;
+  padding-top: 0.4em;
+}
+#presenter-notes:empty::before {
+  content: "(no notes for this slide)";
+  color: var(--rule);
+  font-style: italic;
+}
+
+#presenter-nav {
+  display: flex;
+  gap: 0.5em;
+  flex-shrink: 0;
+}
+#presenter-nav button {
+  flex: 1;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  padding: 0.5em 0;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+}
+#presenter-nav button:hover  { background: var(--ink); color: var(--bg); }
+#presenter-nav button:active { opacity: 0.7; }
+
+/* Mobile presenter view — current slide on top, notes below.
+   Timer and next-slide preview are hidden because there's no room. */
+@media (max-width: 768px) {
+  body.mode-presenter #deck {
+    position: static;
+    top: auto;
+    transform: none;
+    width: 100vw;
+    height: 56.25vw;
+  }
+  body.mode-presenter section {
+    width: 100vw;
+    height: 56.25vw;
+    transform: none;
+  }
+  body.mode-presenter #chapters {
+    width: 100vw;
+  }
+  body.mode-presenter #chapters { right: 0; }
+  body.mode-presenter footer { display: none; }
+
+  body.mode-presenter #presenter-pane {
+    top: 56.25vw;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100vw;
+    height: auto;
+    border-left: none;
+    border-top: 1px solid var(--rule);
+    padding: 1.5vh 5vw 2vh;
+    gap: 0;
+  }
+
+  body.mode-presenter #presenter-controls,
+  body.mode-presenter #next-preview-wrap {
+    display: none;
+  }
+
+  body.mode-presenter #presenter-notes-wrap { flex: 1; min-height: 0; }
+  body.mode-presenter #presenter-notes {
+    font-size: 0.85rem;
+    line-height: 1.45;
+  }
+}
