@@ -237,7 +237,9 @@ export function initDeck(options = {}) {
 			}
 
 			const footerEl = s.querySelector(":scope > footer");
-			const bodyChildren = [...s.children].filter((c) => c !== footerEl);
+			const bodyChildren = [...s.children].filter(
+				(c) => c !== footerEl && getComputedStyle(c).display !== "none",
+			);
 			const lastBody = bodyChildren[bodyChildren.length - 1];
 
 			if (lastBody) {

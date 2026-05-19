@@ -38,6 +38,7 @@
         <li>Three values — black, gray, white</li>
         <li>Two heading levels — h1 chapters, h2 slides</li>
       </ul>
+      <aside class="notes">Three things, not three rules. Audience: "you'll see how little this needs to do." Don't dwell — the next slide flips to "what we remove" and that's where the contrast lands.</aside>
       <footer>Vignelli M. The Vignelli Canon. Lars Müller Publishers; 2010:14-21.</footer>
     </section>
 
@@ -81,6 +82,7 @@ muted:   #666</code></pre>
         <span class="callout-label">Warn</span>
         <p>Use sparingly. A deck with three callouts feels punctuated; a deck with thirty feels like a manual. When in doubt, leave it as body text.</p>
       </aside>
+      <aside class="notes">Callouts are the third "voice" of the deck after body and quotes. Demonstrate by reading the Note aloud, then the Warn — show how rule weight (gray vs ink) carries the difference without using color.</aside>
       <footer>Iverson C, Christiansen S, Flanagin A, et al. AMA Manual of Style. 11th ed. Oxford University Press; 2020.</footer>
     </section>
 
@@ -200,6 +202,7 @@ muted:   #666</code></pre>
         </tbody>
         <caption>Rams' principles — restated to test how aggressively auto-fit can scale the body.</caption>
       </table>
+      <aside class="notes">Don't read each row — let the audience scan. Spend 30s pointing out #10 ("as little design as possible") as the through-line of the whole deck.</aside>
       <footer>Rams D. Ten Principles for Good Design. Vitsœ; 1980.</footer>
     </section>
 
@@ -287,6 +290,23 @@ muted:   #666</code></pre>
     <button id="remote-prev" type="button" aria-label="Previous">←</button>
     <button id="remote-next" type="button" aria-label="Next">→</button>
   </div>
+
+  <aside id="presenter-pane" hidden>
+    <div id="timer">
+      <span id="timer-elapsed">00:00</span>
+      <span class="sep">/</span>
+      <span id="timer-target">25:00</span>
+      <button id="timer-reset" type="button" aria-label="Reset timer">R</button>
+    </div>
+    <div id="next-preview-wrap">
+      <div class="pane-label">next</div>
+      <div id="next-preview"></div>
+    </div>
+    <div id="presenter-notes-wrap">
+      <div class="pane-label">notes</div>
+      <div id="presenter-notes"></div>
+    </div>
+  </aside>
 
   <script type="module" src="slides.js"></script>
 </body>

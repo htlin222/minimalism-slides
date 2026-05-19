@@ -112,7 +112,14 @@ async function presenterMode() {
 	});
 	if (!deck) return;
 
+	setupPresenterPane(deck);
+
 	const pin = sessionStorage.getItem("slides.pin") || (await promptForPin());
+
+	const applyState = (n) => {
+		deck.setCurrentSilent(n);
+		updateNotesAndPreview(deck);
+	};
 
 	const conn = connect({
 		role: "presenter",
@@ -120,9 +127,9 @@ async function presenterMode() {
 		total: deck.total,
 		onWelcome: (m) => {
 			hidePinPrompt();
-			if (typeof m.current === "number") deck.setCurrentSilent(m.current);
+			if (typeof m.current === "number") applyState(m.current);
 		},
-		onState: (m) => deck.setCurrentSilent(m.current),
+		onState: (m) => applyState(m.current),
 		onDeny: async () => {
 			const nextPin = await promptForPin("PIN rejected, try again");
 			sessionStorage.setItem("slides.pin", nextPin);
@@ -130,8 +137,14 @@ async function presenterMode() {
 		},
 	});
 
+	const sendAndStart = (msg) => {
+		timer.start();
+		conn.send(msg);
+	};
+
 	window.addEventListener("keydown", (e) => {
 		if (e.target.matches("input, textarea, [contenteditable]")) return;
+		if (e.key === "r" || e.key === "R") { timer.reset(); e.preventDefault(); return; }
 		let abs = null;
 		let delta = 0;
 		switch (e.key) {
@@ -146,8 +159,8 @@ async function presenterMode() {
 		}
 		e.preventDefault();
 		if (!conn.isConnected()) return;
-		if (abs !== null) conn.send({ type: "jump", index: abs });
-		else conn.send({ type: "go", delta });
+		if (abs !== null) sendAndStart({ type: "jump", index: abs });
+		else sendAndStart({ type: "go", delta });
 	});
 
 	let startX = 0, startY = 0, tracking = false;
@@ -162,8 +175,103 @@ async function presenterMode() {
 		const dx = e.clientX - startX;
 		const dy = e.clientY - startY;
 		if (Math.abs(dx) < 50 || Math.abs(dy) > Math.abs(dx)) return;
-		conn.send({ type: "go", delta: dx < 0 ? +1 : -1 });
+		sendAndStart({ type: "go", delta: dx < 0 ? +1 : -1 });
 	});
+}
+
+// ---- Presenter pane: timer, notes, next-slide preview ------------------
+
+const timer = {
+	startedAt: null,
+	accumulated: 0,
+	targetSeconds: 25 * 60,
+	tickHandle: null,
+	storageKey: "slides.timer",
+
+	mount() {
+		this.restore();
+		this.render();
+		this.tickHandle = setInterval(() => this.render(), 1000);
+		const resetBtn = document.querySelector("#timer-reset");
+		if (resetBtn) resetBtn.addEventListener("click", () => this.reset());
+	},
+	restore() {
+		try {
+			const saved = JSON.parse(sessionStorage.getItem(this.storageKey) || "null");
+			if (saved && typeof saved === "object") {
+				this.startedAt = saved.startedAt ?? null;
+				this.accumulated = saved.accumulated ?? 0;
+				if (typeof saved.targetSeconds === "number") this.targetSeconds = saved.targetSeconds;
+			}
+		} catch { /* ignore */ }
+	},
+	save() {
+		sessionStorage.setItem(this.storageKey, JSON.stringify({
+			startedAt: this.startedAt,
+			accumulated: this.accumulated,
+			targetSeconds: this.targetSeconds,
+		}));
+	},
+	start() {
+		if (this.startedAt) return;
+		this.startedAt = Date.now();
+		this.save();
+	},
+	reset() {
+		this.startedAt = null;
+		this.accumulated = 0;
+		this.save();
+		this.render();
+	},
+	elapsedSeconds() {
+		if (!this.startedAt) return this.accumulated;
+		return this.accumulated + (Date.now() - this.startedAt) / 1000;
+	},
+	render() {
+		const fmt = (s) => {
+			const m = Math.floor(s / 60);
+			const sec = Math.floor(s % 60);
+			return String(m).padStart(2, "0") + ":" + String(sec).padStart(2, "0");
+		};
+		const elapsed = this.elapsedSeconds();
+		const eEl = document.querySelector("#timer-elapsed");
+		const tEl = document.querySelector("#timer-target");
+		if (eEl) eEl.textContent = fmt(elapsed);
+		if (tEl) tEl.textContent = fmt(this.targetSeconds);
+		document.body.classList.toggle("overtime", elapsed > this.targetSeconds);
+	},
+};
+
+function setupPresenterPane(deck) {
+	const pane = document.querySelector("#presenter-pane");
+	if (!pane) return;
+	pane.hidden = false;
+	timer.mount();
+	updateNotesAndPreview(deck);
+}
+
+function updateNotesAndPreview(deck) {
+	const sections = [...document.querySelectorAll("#deck > section")];
+	const cur = sections[deck.getCurrent()];
+	const next = sections[deck.getCurrent() + 1];
+
+	// notes
+	const notesEl = document.querySelector("#presenter-notes");
+	if (notesEl) {
+		const aside = cur?.querySelector(":scope > aside.notes");
+		notesEl.textContent = aside ? aside.textContent.trim() : "";
+	}
+
+	// next slide preview — clone, scale via CSS class
+	const preview = document.querySelector("#next-preview");
+	if (preview) {
+		preview.innerHTML = "";
+		if (next) {
+			const clone = next.cloneNode(true);
+			clone.classList.add("preview", "active");
+			preview.appendChild(clone);
+		}
+	}
 }
 
 async function controlMode() {

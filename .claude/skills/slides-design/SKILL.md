@@ -262,6 +262,12 @@ These are not separate HTML files — Pages serves the same `index.html` for `/l
 
 When **designing slides**, no special markup is needed for live mode — the same `<section>` structure works in every role. The auto-fit pass also runs in live mode, so a slide that fits at 1080p screen will fit on the audience's screen.
 
+### Speaker notes
+
+Add `<aside class="notes">…</aside>` inside any `<section>`. The element is hidden globally (`aside.notes { display: none }`) and only its `textContent` is read into the presenter pane. Notes never appear in standalone, live, or control. They also never affect auto-fit (`getComputedStyle.display === "none"` filters them out during the overflow check).
+
+Position the `<aside class="notes">` **before** the `<footer>` citation. Order inside the section: heading → subtitle → body content → optional `<aside class="notes">` → `<footer>`.
+
 ## Quick decision tree
 
 ```

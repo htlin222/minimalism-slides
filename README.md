@@ -89,6 +89,33 @@ The PIN is a single shared secret across every deck on this Worker. Same PIN unl
 
 Multiple `/live` viewers can connect — they all see the same slide. State persists in DO storage across reconnects and DO hibernation.
 
+### Presenter view (extra chrome)
+
+`/<slug>/presenter` splits the screen 60/40:
+
+- **Left 60vw:** the actual deck — same layout, type, and auto-fit as `/live`.
+- **Right 40vw:** the presenter pane:
+  - **Timer** at the top — counts up from your first nav action, reset with the `R` key or the on-screen button. Target defaults to **25:00**; once you exceed it, the timer block inverts (white-on-black) until you reset.
+  - **Next slide preview** — a live mini-render of the upcoming `<section>`, scaled via CSS transform. Updates automatically on every state change.
+  - **Speaker notes** — pulled from the current section's `<aside class="notes">…</aside>` (if present). Notes are hidden globally and only shown here.
+
+To add speaker notes to a slide, drop an `<aside class="notes">` inside the `<section>`:
+
+```html
+<section>
+  <h2>What we keep</h2>
+  <h6>three things, nothing else</h6>
+  <ul>...</ul>
+  <aside class="notes">
+    Three things, not three rules. Don't dwell — the next slide flips
+    to "what we remove" and that's where the contrast lands.
+  </aside>
+  <footer>Citation.</footer>
+</section>
+```
+
+The `<aside class="notes">` element never renders on standalone, live, or control — only in the presenter pane.
+
 ## Controls
 
 | Keys                       | Action                |

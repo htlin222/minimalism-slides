@@ -693,6 +693,130 @@ body.mode-control #deck,
 body.mode-control footer,
 body.mode-control #chapters { display: none !important; }
 
+/* Speaker notes — hidden globally; presenter view reads textContent into the pane. */
+aside.notes { display: none; }
+
+/* Presenter view — classic split. Deck occupies left 60vw, right 40vw pane
+   holds timer / next preview / notes. */
+#presenter-pane[hidden] { display: none; }
+
+body.mode-presenter #presenter-pane {
+  display: flex;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 40vw;
+  z-index: 50;
+  background: var(--bg);
+  border-left: 1px solid var(--rule);
+  padding: 2vh 2.5vw;
+  flex-direction: column;
+  gap: 2vh;
+}
+
+body.mode-presenter #deck,
+body.mode-presenter section,
+body.mode-presenter footer,
+body.mode-presenter #chapters {
+  width: 60vw;
+}
+body.mode-presenter #chapters { right: 40vw; }
+body.mode-presenter footer    { right: 40vw; }
+
+#timer {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4em;
+  font-size: 1.4rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+  padding: 0.4em 0.6em;
+}
+#timer .sep { color: var(--rule); font-weight: 400; }
+#timer-target { color: var(--muted); font-weight: 400; }
+
+#timer-reset {
+  margin-left: auto;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  padding: 0.3em 0.7em;
+  cursor: pointer;
+}
+#timer-reset:hover { background: var(--ink); color: var(--bg); }
+
+body.overtime #timer {
+  background: var(--ink);
+  color: var(--bg);
+}
+body.overtime #timer .sep,
+body.overtime #timer-target { color: var(--bg); opacity: 0.6; }
+body.overtime #timer-reset { border-color: var(--bg); color: var(--bg); }
+body.overtime #timer-reset:hover { background: var(--bg); color: var(--ink); }
+
+.pane-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--rule);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.4em;
+}
+
+#next-preview-wrap { display: flex; flex-direction: column; }
+#next-preview {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--rule);
+  overflow: hidden;
+  position: relative;
+  background: var(--bg);
+}
+
+/* Cloned next-section is rendered at full viewport size, then scale-transformed
+   to fit. transform-origin top-left + container overflow:hidden = clean clip. */
+#next-preview > section.preview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex !important;
+  transform: scale(0.36);
+  transform-origin: top left;
+  pointer-events: none;
+}
+#next-preview > section.preview > footer { display: none; }   /* citation noise in mini */
+#next-preview > section.preview aside.notes { display: none; }
+
+#presenter-notes-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+#presenter-notes {
+  flex: 1;
+  overflow-y: auto;
+  font-size: 1rem;
+  line-height: 1.45;
+  color: var(--ink);
+  white-space: pre-wrap;
+  padding-top: 0.4em;
+}
+#presenter-notes:empty::before {
+  content: "(no notes for this slide)";
+  color: var(--rule);
+  font-style: italic;
+}
+
 body.mode-control:not(.connected) #remote button,
 body.mode-presenter:not(.connected):not(.mode-presenter[data-mode-pending]) #remote button {
   opacity: 0.35;
