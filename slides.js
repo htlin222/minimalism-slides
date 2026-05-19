@@ -5,7 +5,8 @@
 //   /<slug>/presenter   presenter    WS read+write, PIN-gated, keyboard sends commands
 //   /<slug>/control     control      WS read+write, PIN-gated, minimal remote UI
 //
-// Pages serves the same index.html for every path under the slug (see _redirects).
+// Pages serves index.html, live.html, presenter.html, control.html as separate
+// files (Makefile generates the copies from index.html at deploy time).
 import { initDeck } from "./core.js";
 
 const KNOWN_MODES = ["live", "presenter", "control"];
@@ -288,7 +289,6 @@ function updateNotesAndPreview(deck) {
 }
 
 async function controlMode() {
-	document.body.classList.add("hide-deck");
 	const total = document.querySelectorAll("#deck > section").length;
 	if (!total) return;
 

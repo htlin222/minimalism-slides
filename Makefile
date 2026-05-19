@@ -96,5 +96,5 @@ preview: $(PDF)
 	@echo "Wrote preview.png ($$(du -h preview.png | cut -f1))"
 
 clean:
-	@command -v rip >/dev/null 2>&1 && rip -f $(PDF) preview.png 2>/dev/null || rm -f $(PDF) preview.png
+	@command -v rip >/dev/null 2>&1 && rip $(PDF) preview.png 2>/dev/null || rm -f $(PDF) preview.png
 	@rm -rf $(DIST)

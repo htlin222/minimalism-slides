@@ -865,8 +865,7 @@ body.overtime #timer-reset:hover { background: var(--bg); color: var(--ink); }
   }
 }
 
-body.mode-control:not(.connected) #remote button,
-body.mode-presenter:not(.connected):not(.mode-presenter[data-mode-pending]) #remote button {
+body.mode-control:not(.connected) #remote button {
   opacity: 0.35;
   pointer-events: none;
 }

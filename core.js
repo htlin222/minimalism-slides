@@ -24,7 +24,7 @@ export function initDeck(options = {}) {
 	const chapters = [];
 
 	sections.forEach((s, idx) => {
-		const firstHeading = s.querySelector("h1, h2, h3, h4, h5");
+		const firstHeading = s.querySelector("h1, h2, h3, h5");
 		if (firstHeading && firstHeading.tagName === "H1") {
 			s.classList.add("divider");
 			chapters.push({ idx, title: firstHeading.textContent.trim() });

@@ -165,8 +165,7 @@ To add a slide, drop a new `<section>` into `index.html`. No registration step.
     styles.css       typography, layout, overview grid, print rules, modes
     slides.js        mode dispatcher (standalone / live / presenter / control)
     core.js          shared deck setup + rendering (auto-fit, chapter menu, outline)
-    _redirects       Pages SPA routing: /live, /presenter, /control -> index.html
-    preview.png            3×3 thumbnail grid (regenerate via `make preview`)
+    preview.png      3×3 thumbnail grid (regenerate via `make preview`)
     slides.example.json    template — copy to slides.json before deploying
     worker.example.toml    template — copy to worker.toml before deploying
     worker.js              Cloudflare Worker — path router for your apex
