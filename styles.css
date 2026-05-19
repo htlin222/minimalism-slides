@@ -817,6 +817,43 @@ body.overtime #timer-reset:hover { background: var(--bg); color: var(--ink); }
   font-style: italic;
 }
 
+/* Mobile presenter view — current slide on top, notes below.
+   Timer and next-slide preview are hidden because there's no room. */
+@media (max-width: 768px) {
+  body.mode-presenter #deck,
+  body.mode-presenter section,
+  body.mode-presenter #chapters {
+    width: 100vw;
+  }
+  body.mode-presenter #chapters { right: 0; }
+  body.mode-presenter section { height: 60vh; }
+  body.mode-presenter footer { display: none; }
+
+  body.mode-presenter #presenter-pane {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100vw;
+    height: 40vh;
+    border-left: none;
+    border-top: 1px solid var(--rule);
+    padding: 1.5vh 5vw 2vh;
+    gap: 0;
+  }
+
+  body.mode-presenter #timer,
+  body.mode-presenter #next-preview-wrap {
+    display: none;
+  }
+
+  body.mode-presenter #presenter-notes-wrap { flex: 1; min-height: 0; }
+  body.mode-presenter #presenter-notes {
+    font-size: 1.05rem;
+    line-height: 1.4;
+  }
+}
+
 body.mode-control:not(.connected) #remote button,
 body.mode-presenter:not(.connected):not(.mode-presenter[data-mode-pending]) #remote button {
   opacity: 0.35;
