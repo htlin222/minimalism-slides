@@ -731,6 +731,10 @@ body.mode-presenter #presenter-pane {
 }
 
 body.mode-presenter #deck {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
   width: 60vw;
   height: 33.75vw;
   overflow: hidden;
@@ -890,6 +894,9 @@ body.overtime #timer-reset:hover { background: var(--bg); color: var(--ink); }
    Timer and next-slide preview are hidden because there's no room. */
 @media (max-width: 768px) {
   body.mode-presenter #deck {
+    position: static;
+    top: auto;
+    transform: none;
     width: 100vw;
     height: 56.25vw;
   }

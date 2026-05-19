@@ -252,6 +252,16 @@ async function presenterMode() {
 			navigate(e.clientX < mid ? -1 : +1, null);
 		});
 	}
+
+	// Chapter menu links set location.hash but initDeck runs with enableHash:false,
+	// so the built-in hashchange listener is absent. Route hash jumps through navigate()
+	// so the deck moves AND the DO is updated.
+	window.addEventListener("hashchange", () => {
+		const m = location.hash.match(/^#\/(\d+)$/);
+		if (!m) return;
+		const n = parseInt(m[1], 10) - 1;
+		if (n >= 0 && n < deck.total) navigate(null, n);
+	});
 }
 
 // ---- Presenter pane: timer, notes, next-slide preview ------------------
