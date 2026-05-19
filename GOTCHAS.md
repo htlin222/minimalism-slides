@@ -174,6 +174,20 @@ Useful, but unintuitive — the chapter menu (fixed) automatically prints at the
 
 ## JavaScript
 
+### Top-level mode dispatch can hit `const` temporal dead zones
+
+Calling the mode dispatcher near the top of `slides.js` looked harmless because the mode functions are declarations. But `presenterMode()` synchronously calls `setupPresenterPane()` before its first `await`, and that reads the `const timer = ...` object declared later in the file.
+
+Result: `/presenter` threw `ReferenceError: Cannot access 'timer' before initialization` before the PIN prompt / WebSocket sync path could finish.
+
+**Fix:** set `body.dataset.mode` early for CSS, but start the selected mode only at the end of the module, after all `const` singletons are initialized.
+
+### Clamp shared slide state at the source, not only in each view
+
+`initDeck().setCurrent()` clamps locally, but the Durable Object used to store unbounded indexes. Repeated "next" from `/control` at the final slide could push DO state past the real deck length. `/live` and `/presenter` visually clamped to the last slide while `/control` believed it had advanced, so the next shared update felt out of sync.
+
+**Fix:** every controller sends its deck `total`; the DO clamps stored `current` to `0..total-1`, and clients avoid sending boundary no-ops.
+
 ### `URL` as a variable name shadows the global `URL` constructor
 
 Trivial-looking but cost us a debug cycle:

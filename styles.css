@@ -670,6 +670,10 @@ body.overview #chapters { display: none; }
   justify-content: center;
   line-height: 1;
 }
+#remote button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
 
 #remote-prev {
   width: 55%;
@@ -726,14 +730,34 @@ body.mode-presenter #presenter-pane {
   gap: 2vh;
 }
 
-body.mode-presenter #deck,
-body.mode-presenter section,
-body.mode-presenter footer,
+body.mode-presenter #deck {
+  width: 60vw;
+  height: 33.75vw;
+  overflow: hidden;
+}
+body.mode-presenter section {
+  width: 100vw;
+  height: 56.25vw;
+  transform: scale(0.6);
+  transform-origin: top left;
+}
+body.mode-presenter > footer,
 body.mode-presenter #chapters {
   width: 60vw;
 }
 body.mode-presenter #chapters { right: 40vw; }
-body.mode-presenter footer    { right: 40vw; }
+body.mode-presenter > footer  { right: 40vw; }
+
+body.mode-presenter.overview #deck {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+body.mode-presenter.overview section {
+  width: 100%;
+  height: auto;
+  transform: none;
+}
 
 #timer {
   display: flex;
@@ -747,7 +771,19 @@ body.mode-presenter footer    { right: 40vw; }
   padding: 0.4em 0.6em;
 }
 #timer .sep { color: var(--rule); font-weight: 400; }
-#timer-target { color: var(--muted); font-weight: 400; }
+#timer-target {
+  width: 3.8em;
+  font: inherit;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  padding: 0;
+  outline: none;
+}
+#timer-target:focus { border-bottom-color: var(--rule); }
 
 #timer-reset {
   margin-left: auto;
@@ -769,6 +805,7 @@ body.overtime #timer {
 }
 body.overtime #timer .sep,
 body.overtime #timer-target { color: var(--bg); opacity: 0.6; }
+body.overtime #timer-target:focus { border-bottom-color: var(--bg); }
 body.overtime #timer-reset { border-color: var(--bg); color: var(--bg); }
 body.overtime #timer-reset:hover { background: var(--bg); color: var(--ink); }
 
@@ -816,7 +853,7 @@ body.overtime #timer-reset:hover { background: var(--bg); color: var(--ink); }
 #presenter-notes {
   flex: 1;
   overflow-y: auto;
-  font-size: 1rem;
+  font-size: 0.8rem;
   line-height: 1.45;
   color: var(--ink);
   white-space: pre-wrap;
@@ -852,22 +889,28 @@ body.overtime #timer-reset:hover { background: var(--bg); color: var(--ink); }
 /* Mobile presenter view — current slide on top, notes below.
    Timer and next-slide preview are hidden because there's no room. */
 @media (max-width: 768px) {
-  body.mode-presenter #deck,
-  body.mode-presenter section,
+  body.mode-presenter #deck {
+    width: 100vw;
+    height: 56.25vw;
+  }
+  body.mode-presenter section {
+    width: 100vw;
+    height: 56.25vw;
+    transform: none;
+  }
   body.mode-presenter #chapters {
     width: 100vw;
   }
   body.mode-presenter #chapters { right: 0; }
-  body.mode-presenter section { height: 60vh; }
   body.mode-presenter footer { display: none; }
 
   body.mode-presenter #presenter-pane {
-    top: auto;
+    top: 56.25vw;
     bottom: 0;
     left: 0;
     right: 0;
     width: 100vw;
-    height: 40vh;
+    height: auto;
     border-left: none;
     border-top: 1px solid var(--rule);
     padding: 1.5vh 5vw 2vh;
@@ -881,8 +924,8 @@ body.overtime #timer-reset:hover { background: var(--bg); color: var(--ink); }
 
   body.mode-presenter #presenter-notes-wrap { flex: 1; min-height: 0; }
   body.mode-presenter #presenter-notes {
-    font-size: 1.05rem;
-    line-height: 1.4;
+    font-size: 0.85rem;
+    line-height: 1.45;
   }
 }
 

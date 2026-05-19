@@ -20,13 +20,6 @@ const mode = detectMode();
 document.body.dataset.mode = mode;
 document.body.classList.add(`mode-${mode}`);
 
-({
-	standalone: async () => { await applyDeckMeta(); initDeck(); },
-	live: () => liveMode(),
-	presenter: () => presenterMode(),
-	control: () => controlMode(),
-})[mode]?.();
-
 async function applyDeckMeta() {
 	let meta;
 	try {
@@ -201,12 +194,15 @@ async function presenterMode() {
 
 	// Move locally first, then broadcast if WS is live.
 	const navigate = (delta, abs) => {
-		timer.start();
+		const before = deck.getCurrent();
 		if (abs !== null) deck.setCurrent(abs);
 		else deck.go(delta);
+		const after = deck.getCurrent();
+		if (after === before) return;
+		timer.start();
 		updateNotesAndPreview(deck);
 		if (conn.isConnected()) {
-			conn.send(abs !== null ? { type: "jump", index: abs } : { type: "go", delta });
+			conn.send({ type: "jump", index: after });
 		}
 	};
 
@@ -266,9 +262,11 @@ const timer = {
 	targetSeconds: 25 * 60,
 	tickHandle: null,
 	storageKey: "slides.timer",
+	targetStorageKey: "slides.timer.targetSeconds",
 
 	mount() {
 		this.restore();
+		this.bindTargetInput();
 		this.render();
 		this.tickHandle = setInterval(() => this.render(), 1000);
 		const resetBtn = document.querySelector("#timer-reset");
@@ -283,13 +281,67 @@ const timer = {
 				if (typeof saved.targetSeconds === "number") this.targetSeconds = saved.targetSeconds;
 			}
 		} catch { /* ignore */ }
+		const savedTarget = this.readStoredTarget();
+		if (savedTarget !== null) this.targetSeconds = savedTarget;
 	},
 	save() {
 		sessionStorage.setItem(this.storageKey, JSON.stringify({
 			startedAt: this.startedAt,
 			accumulated: this.accumulated,
-			targetSeconds: this.targetSeconds,
 		}));
+	},
+	readStoredTarget() {
+		try {
+			const saved = Number(localStorage.getItem(this.targetStorageKey));
+			return Number.isFinite(saved) && saved > 0 ? Math.round(saved) : null;
+		} catch {
+			return null;
+		}
+	},
+	saveTarget() {
+		try {
+			localStorage.setItem(this.targetStorageKey, String(this.targetSeconds));
+		} catch { /* ignore */ }
+	},
+	parseTarget(value) {
+		const raw = String(value).trim();
+		if (!raw) return null;
+		const match = raw.match(/^(\d{1,3})(?::([0-5]?\d))?$/);
+		if (!match) return null;
+		const minutes = Number(match[1]);
+		const seconds = match[2] === undefined ? 0 : Number(match[2]);
+		const total = minutes * 60 + seconds;
+		return total > 0 ? Math.min(total, 999 * 60 + 59) : null;
+	},
+	setTarget(seconds) {
+		this.targetSeconds = Math.round(seconds);
+		this.saveTarget();
+		this.render();
+	},
+	bindTargetInput() {
+		const targetInput = document.querySelector("#timer-target");
+		if (!(targetInput instanceof HTMLInputElement)) return;
+		const commit = () => {
+			const next = this.parseTarget(targetInput.value);
+			if (next === null) {
+				this.render();
+				return;
+			}
+			this.setTarget(next);
+		};
+		targetInput.addEventListener("change", commit);
+		targetInput.addEventListener("blur", commit);
+		targetInput.addEventListener("keydown", (e) => {
+			if (e.key === "Enter") {
+				e.preventDefault();
+				targetInput.blur();
+			}
+			if (e.key === "Escape") {
+				e.preventDefault();
+				this.render();
+				targetInput.blur();
+			}
+		});
 	},
 	start() {
 		if (this.startedAt) return;
@@ -316,7 +368,11 @@ const timer = {
 		const eEl = document.querySelector("#timer-elapsed");
 		const tEl = document.querySelector("#timer-target");
 		if (eEl) eEl.textContent = fmt(elapsed);
-		if (tEl) tEl.textContent = fmt(this.targetSeconds);
+		if (tEl instanceof HTMLInputElement) {
+			if (document.activeElement !== tEl) tEl.value = fmt(this.targetSeconds);
+		} else if (tEl) {
+			tEl.textContent = fmt(this.targetSeconds);
+		}
 		document.body.classList.toggle("overtime", elapsed > this.targetSeconds);
 	},
 };
@@ -370,12 +426,19 @@ async function controlMode() {
 	totalEl.textContent = pad(total);
 	currentEl.textContent = pad(current + 1);
 
-	const pin = sessionStorage.getItem("slides.pin") || (await promptForPin());
+	const updateButtons = () => {
+		prev.disabled = current <= 0;
+		next.disabled = current >= total - 1;
+	};
 
 	const setCurrent = (n) => {
 		current = Math.max(0, Math.min(total - 1, n));
 		currentEl.textContent = pad(current + 1);
+		updateButtons();
 	};
+	updateButtons();
+
+	const pin = sessionStorage.getItem("slides.pin") || (await promptForPin());
 
 	const conn = connect({
 		role: "control",
@@ -391,10 +454,10 @@ async function controlMode() {
 	});
 
 	prev.addEventListener("click", () => {
-		if (conn.isConnected()) conn.send({ type: "go", delta: -1 });
+		if (current > 0 && conn.isConnected()) conn.send({ type: "go", delta: -1 });
 	});
 	next.addEventListener("click", () => {
-		if (conn.isConnected()) conn.send({ type: "go", delta: +1 });
+		if (current < total - 1 && conn.isConnected()) conn.send({ type: "go", delta: +1 });
 	});
 }
 
@@ -428,3 +491,10 @@ function hidePinPrompt() {
 	document.querySelector("#pin-prompt").hidden = true;
 	document.querySelector("#pin-error").textContent = "";
 }
+
+({
+	standalone: async () => { await applyDeckMeta(); initDeck(); },
+	live: () => liveMode(),
+	presenter: () => presenterMode(),
+	control: () => controlMode(),
+})[mode]?.();

@@ -61,6 +61,7 @@ export class SessionDO {
 		this.state = state;
 		this.env = env;
 		this.current = 0;
+		this.total = null;
 		this.state.blockConcurrencyWhile(async () => {
 			this.current = (await state.storage.get("current")) ?? 0;
 		});
@@ -89,7 +90,12 @@ export class SessionDO {
 				ws.send(JSON.stringify({ type: "deny", reason: "bad-pin" }));
 				return ws.close(4001, "bad-pin");
 			}
-			ws.serializeAttachment({ role });
+			const total = this.normalizeTotal(msg.total);
+			if ((role === "presenter" || role === "control") && total !== null) {
+				this.total = total;
+				this.clampCurrent(total);
+			}
+			ws.serializeAttachment({ role, total });
 			ws.send(JSON.stringify({ type: "welcome", current: this.current }));
 			return;
 		}
@@ -99,14 +105,31 @@ export class SessionDO {
 		if (role !== "presenter" && role !== "control") return; // viewers / pre-hello sockets can't mutate
 
 		if (msg.type === "jump" && Number.isInteger(msg.index)) {
-			this.setCurrent(msg.index);
+			this.setCurrent(msg.index, att?.total);
 		} else if (msg.type === "go" && Number.isInteger(msg.delta)) {
-			this.setCurrent(this.current + msg.delta);
+			this.setCurrent(this.current + msg.delta, att?.total);
 		}
 	}
 
-	setCurrent(n) {
-		const next = Math.max(0, n);
+	normalizeTotal(total) {
+		return Number.isInteger(total) && total > 0 ? total : null;
+	}
+
+	clampIndex(n, total = this.total) {
+		const min = Math.max(0, n);
+		if (Number.isInteger(total) && total > 0) return Math.min(total - 1, min);
+		return min;
+	}
+
+	clampCurrent(total = this.total) {
+		const next = this.clampIndex(this.current, total);
+		if (next === this.current) return;
+		this.current = next;
+		this.state.storage.put("current", next);
+	}
+
+	setCurrent(n, total = this.total) {
+		const next = this.clampIndex(n, total);
 		if (next === this.current) return;
 		this.current = next;
 		this.state.storage.put("current", next);

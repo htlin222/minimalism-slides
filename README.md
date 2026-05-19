@@ -105,7 +105,7 @@ Multiple `/live` viewers can connect — they all see the same slide. State pers
 
 - **Left 60vw:** the actual deck — same layout, type, and auto-fit as `/live`.
 - **Right 40vw:** the presenter pane:
-  - **Timer** at the top — counts up from your first nav action, reset with the `R` key or the on-screen button. Target defaults to **25:00**; once you exceed it, the timer block inverts (white-on-black) until you reset.
+  - **Timer** at the top — counts up from your first nav action, reset with the `R` key or the on-screen button. Target defaults to **25:00**; edit the target in presenter view to save a local browser default. Once you exceed it, the timer block inverts (white-on-black) until you reset.
   - **Next slide preview** — a live mini-render of the upcoming `<section>`, scaled via CSS transform. Updates automatically on every state change.
   - **Speaker notes** — pulled from the current section's `<aside class="notes">…</aside>` (if present). Notes are hidden globally and only shown here.
 
