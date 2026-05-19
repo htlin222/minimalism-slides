@@ -10,6 +10,9 @@ dist/
 # Wrangler / Cloudflare cache
 .wrangler/
 
+# Claude Code git worktrees
+.claude/worktrees/
+
 # Deploy configs hold a personal domain — track only the .example.* templates.
 slides.json
 worker.toml
