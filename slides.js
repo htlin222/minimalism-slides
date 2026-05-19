@@ -34,6 +34,7 @@ async function applyDeckMeta() {
 		if (!res.ok) return;
 		meta = await res.json();
 	} catch { return; }
+	if (!meta || typeof meta !== "object" || Array.isArray(meta)) return;
 
 	if (meta.title) document.title = meta.title;
 
@@ -48,19 +49,39 @@ async function applyDeckMeta() {
 
 	const authorEl = cover.querySelector("p.author");
 	if (authorEl && (meta.author || meta.affiliation || meta.email)) {
-		let html = "";
+		authorEl.replaceChildren();
+
 		if (meta.author) {
-			html += meta.authorUrl
-				? `<a href="${meta.authorUrl}" target="_blank" rel="noopener">${meta.author}</a>`
-				: `<span>${meta.author}</span>`;
-			if (meta.affiliation) html += `<span class="sep">·</span>`;
+			let nameEl;
+			if (meta.authorUrl && /^https?:\/\//i.test(meta.authorUrl)) {
+				nameEl = document.createElement("a");
+				nameEl.href = meta.authorUrl;
+				nameEl.target = "_blank";
+				nameEl.rel = "noopener";
+			} else {
+				nameEl = document.createElement("span");
+			}
+			nameEl.textContent = meta.author;
+			authorEl.appendChild(nameEl);
+			if (meta.affiliation) {
+				const sep = document.createElement("span");
+				sep.className = "sep";
+				sep.textContent = "·";
+				authorEl.appendChild(sep);
+			}
 		}
-		if (meta.affiliation) html += meta.affiliation;
+
+		if (meta.affiliation) {
+			authorEl.appendChild(document.createTextNode(meta.affiliation));
+		}
+
 		if (meta.email) {
-			if (meta.author || meta.affiliation) html += `<br>`;
-			html += `<a href="mailto:${meta.email}">${meta.email}</a>`;
+			if (meta.author || meta.affiliation) authorEl.appendChild(document.createElement("br"));
+			const a = document.createElement("a");
+			a.href = `mailto:${meta.email}`;
+			a.textContent = meta.email;
+			authorEl.appendChild(a);
 		}
-		authorEl.innerHTML = html;
 	}
 
 	const deckFooter = document.getElementById("deck-footer");
