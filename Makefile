@@ -67,7 +67,7 @@ dist: $(DEPS) $(CONFIG)
 	@[ -f $(CONFIG) ] || { echo "Missing $(CONFIG)"; exit 1; }
 	@rm -rf $(DIST)
 	@mkdir -p $(DIST)
-	@cp -- $(DEPS) $(DIST)/
+	@cp -- $(DEPS) $(CONFIG) $(DIST)/
 	@for f in $(MODE_PAGES); do cp $(DIST)/index.html $(DIST)/$$f; done
 	@echo "Built $(DIST)/ (slug: $$(jq -r .slug $(CONFIG)))"
 

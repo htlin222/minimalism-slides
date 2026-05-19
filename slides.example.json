@@ -1,7 +1,13 @@
 {
-  "slug": "your-slug",
-  "title": "Your Deck Title",
-  "project": "your-pages-project",
-  "domain": "slides.yourdomain.com",
-  "branch": "main"
+  "slug":        "your-slug",
+  "title":       "Your Deck Title",
+  "subtitle":    "a short phrase",
+  "author":      "Your Name",
+  "authorUrl":   "https://your-site.com/about/",
+  "affiliation": "Your Institution",
+  "email":       "you@example.com",
+  "footer":      "Author A. Your Deck Title. Published 2026.",
+  "project":     "your-pages-project",
+  "domain":      "slides.yourdomain.com",
+  "branch":      "main"
 }

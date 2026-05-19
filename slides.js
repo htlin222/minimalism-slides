@@ -21,11 +21,51 @@ document.body.dataset.mode = mode;
 document.body.classList.add(`mode-${mode}`);
 
 ({
-	standalone: () => initDeck(),
+	standalone: async () => { await applyDeckMeta(); initDeck(); },
 	live: () => liveMode(),
 	presenter: () => presenterMode(),
 	control: () => controlMode(),
 })[mode]?.();
+
+async function applyDeckMeta() {
+	let meta;
+	try {
+		const res = await fetch("./slides.json");
+		if (!res.ok) return;
+		meta = await res.json();
+	} catch { return; }
+
+	if (meta.title) document.title = meta.title;
+
+	const cover = document.getElementById("cover-slide");
+	if (!cover) return;
+
+	const h1 = cover.querySelector("h1");
+	if (h1 && meta.title) h1.textContent = meta.title;
+
+	const h6 = cover.querySelector("h6");
+	if (h6 && meta.subtitle !== undefined) h6.textContent = meta.subtitle;
+
+	const authorEl = cover.querySelector("p.author");
+	if (authorEl && (meta.author || meta.affiliation || meta.email)) {
+		let html = "";
+		if (meta.author) {
+			html += meta.authorUrl
+				? `<a href="${meta.authorUrl}" target="_blank" rel="noopener">${meta.author}</a>`
+				: `<span>${meta.author}</span>`;
+			if (meta.affiliation) html += `<span class="sep">·</span>`;
+		}
+		if (meta.affiliation) html += meta.affiliation;
+		if (meta.email) {
+			if (meta.author || meta.affiliation) html += `<br>`;
+			html += `<a href="mailto:${meta.email}">${meta.email}</a>`;
+		}
+		authorEl.innerHTML = html;
+	}
+
+	const deckFooter = document.getElementById("deck-footer");
+	if (deckFooter && meta.footer) deckFooter.textContent = meta.footer;
+}
 
 // ---- WebSocket plumbing -------------------------------------------------
 
