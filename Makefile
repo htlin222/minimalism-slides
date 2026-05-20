@@ -6,14 +6,16 @@
 #   make watch  →  rebuild slides.pdf on save (needs `watchexec`)
 #   make dist   →  build dist/ with just the deck files for deploy
 #   make page   →  deploy dist/ to Cloudflare Pages (slug/project from slides.json)
-#   make worker →  deploy worker.js (path-based router for slides.hsiehting.com)
-#   make preview→  preview.png — 3x3 thumbnail grid of slides 1-9 (for README)
-#   make clean  →  remove slides.pdf, dist/, preview.png
+#   make worker →  deploy worker/worker.js (path router for slides.hsiehting.com)
+#   make preview→  docs/preview.png — 3x3 thumbnail grid of slides 1-9 (for README)
+#   make clean  →  remove slides.pdf, dist/, docs/preview.png
 
 PDF       := slides.pdf
+PREVIEW   := docs/preview.png
 SRC_DIR   := $(CURDIR)
 INDEX     := index.html
-DEPS      := index.html slides.js core.js
+DEPS      := index.html
+JS_DEPS   := src/slides.js src/core.js
 STYLES    := $(wildcard styles/*.css)
 MODE_PAGES:= live.html presenter.html control.html
 CONFIG    := slides.json
@@ -38,7 +40,7 @@ all: pdf
 
 pdf: $(PDF)
 
-$(PDF): $(DEPS) $(STYLES)
+$(PDF): $(DEPS) $(STYLES) $(JS_DEPS)
 	@if [ -z "$(CHROME)" ]; then \
 		echo "Chrome / Chromium not found. Install Google Chrome, or run:"; \
 		echo "    make pdf CHROME=/path/to/chrome"; \
@@ -56,19 +58,20 @@ $(PDF): $(DEPS) $(STYLES)
 	@echo "Wrote $(PDF) ($$(du -h $(PDF) | cut -f1))"
 
 serve:
-	@python3 serve.py 8000
+	@python3 src/serve.py 8000
 
 watch:
 	@command -v watchexec >/dev/null 2>&1 || { echo "Install watchexec first (brew install watchexec)"; exit 1; }
 	watchexec -e html,css,js -- $(MAKE) pdf
 
-dist: $(DEPS) $(STYLES) $(CONFIG)
+dist: $(DEPS) $(STYLES) $(JS_DEPS) $(CONFIG)
 	@command -v jq >/dev/null 2>&1 || { echo "Install jq first (brew install jq)"; exit 1; }
 	@[ -f $(CONFIG) ] || { echo "Missing $(CONFIG)"; exit 1; }
 	@rm -rf $(DIST)
-	@mkdir -p $(DIST)
+	@mkdir -p $(DIST)/src
 	@cp -- $(DEPS) $(CONFIG) $(DIST)/
 	@cp -R styles $(DIST)/
+	@cp $(JS_DEPS) $(DIST)/src/
 	@for f in $(MODE_PAGES); do cp $(DIST)/index.html $(DIST)/$$f; done
 	@echo "Built $(DIST)/ (slug: $$(jq -r .slug $(CONFIG)))"
 
@@ -84,18 +87,18 @@ page: dist
 	echo "" && \
 	echo "Live at:  https://$$DOMAIN/$$SLUG/"
 
-worker: worker.js worker.toml
+worker: worker/worker.js worker/worker.toml
 	@command -v wrangler >/dev/null 2>&1 || { echo "Install wrangler first: npm i -g wrangler"; exit 1; }
-	wrangler deploy --config worker.toml
+	wrangler deploy --config worker/worker.toml
 
 preview: $(PDF)
 	@command -v pdftocairo >/dev/null 2>&1 || { echo "Install poppler first (brew install poppler)"; exit 1; }
 	@command -v montage >/dev/null 2>&1 || { echo "Install imagemagick first (brew install imagemagick)"; exit 1; }
 	pdftocairo -png -scale-to 800 -f 1 -l 9 $(PDF) preview-page
-	montage preview-page-*.png -tile 3x3 -geometry 500x+6+6 -background "#fff" preview.png
+	montage preview-page-*.png -tile 3x3 -geometry 500x+6+6 -background "#fff" $(PREVIEW)
 	@rm -f preview-page-*.png
-	@echo "Wrote preview.png ($$(du -h preview.png | cut -f1))"
+	@echo "Wrote $(PREVIEW) ($$(du -h $(PREVIEW) | cut -f1))"
 
 clean:
-	@command -v rip >/dev/null 2>&1 && rip $(PDF) preview.png 2>/dev/null || rm -f $(PDF) preview.png
+	@command -v rip >/dev/null 2>&1 && rip $(PDF) $(PREVIEW) 2>/dev/null || rm -f $(PDF) $(PREVIEW)
 	@rm -rf $(DIST)

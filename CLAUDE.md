@@ -18,6 +18,8 @@ Do not introduce a new layout, color, font weight, or animation without first ch
 ## File layout
 
     index.html       markup — one <section> per slide
-    styles.css       typography, layout, overview, print rules
-    slides.js        navigation, hash routing, auto-fit, outline injection
+    styles/          base / slides / chrome / overview / presenter / control / print
+    src/             slides.js (mode dispatcher), core.js (deck), serve.py (dev)
+    docs/            GOTCHAS.md, preview.png, slides.example.json
+    worker/          worker.js + worker.toml (Cloudflare path router)
     Makefile         `make pdf` / `make serve` / `make watch`

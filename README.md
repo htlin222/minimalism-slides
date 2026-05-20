@@ -6,7 +6,7 @@ A self-contained presentation deck — pure HTML, CSS, JS. No build step, no fra
 
 **Live demo:** [slides.hsiehting.com/minimalism-slides/](https://slides.hsiehting.com/minimalism-slides/#/1)
 
-![Preview — 3×3 grid of slides 1–9](preview.png)
+![Preview — 3×3 grid of slides 1–9](docs/preview.png)
 
 ## Open
 
@@ -14,7 +14,7 @@ A self-contained presentation deck — pure HTML, CSS, JS. No build step, no fra
 
 Or serve over HTTP if you prefer:
 
-    make serve            # python3 -m http.server 8000
+    make serve            # python3 src/serve.py 8000  (routes /presenter etc.)
 
 ## Export to PDF
 
@@ -28,13 +28,13 @@ The Makefile shells out to headless Chrome with `--print-to-pdf`. The PDF is ren
 
 First-time setup — copy the example configs (which are git-tracked) into the real ones (which are git-ignored because they contain your domain):
 
-    cp slides.example.json slides.json
-    cp worker.example.toml worker.toml
+    cp docs/slides.example.json slides.json
+    cp worker/worker.example.toml worker/worker.toml
     # then edit both to point at your Cloudflare account / domain
 
 Then:
 
-    make dist             # bundle index.html + styles.css + slides.js into dist/
+    make dist             # bundle index.html + styles/ + src/ into dist/
     make page             # deploy dist/ to Cloudflare Pages, print live URL
 
 `slides.json` holds both the deck identity and the deploy config:
@@ -63,11 +63,11 @@ The identity fields (`title` through `footer`) are loaded at runtime by `slides.
 
 then prints the path-prefixed URL `https://$DOMAIN/$SLUG/`. (`make page` also auto-creates the Pages project if it doesn't exist yet.)
 
-Path routing — `slides.hsiehting.com/<slug>` → `<slug>.pages.dev` — is handled by a separate Cloudflare Worker (see `worker.js`):
+Path routing — `slides.hsiehting.com/<slug>` → `<slug>.pages.dev` — is handled by a separate Cloudflare Worker (see `worker/worker.js`):
 
-    make worker           # wrangler deploy --config worker.toml
+    make worker           # wrangler deploy --config worker/worker.toml
 
-One-time after the first `make worker`: in the Cloudflare dashboard, attach the route `slides.hsiehting.com/*` to the `slides-router` worker (Workers & Pages → slides-router → Triggers → Routes). Or uncomment the `[[routes]]` block in `worker.toml` and re-run `make worker`.
+One-time after the first `make worker`: in the Cloudflare dashboard, attach the route `slides.hsiehting.com/*` to the `slides-router` worker (Workers & Pages → slides-router → Triggers → Routes). Or uncomment the `[[routes]]` block in `worker/worker.toml` and re-run `make worker`.
 
 Prerequisites: `jq`, `wrangler` (`npm i -g wrangler`), and either `wrangler login` or a `CLOUDFLARE_API_TOKEN` env var.
 
@@ -85,7 +85,7 @@ Standalone `/<slug>/` is unchanged — opens without WebSocket and behaves as be
 
 ### One-time setup
 
-    wrangler secret put SLIDES_PIN --config worker.toml   # enter your PIN
+    wrangler secret put SLIDES_PIN --config worker/worker.toml   # enter your PIN
     make worker                                            # deploy Worker + DO + migration
     make page                                              # deploy frontend
 
@@ -171,22 +171,28 @@ To add a slide, drop a new `<section>` into `index.html`. No registration step.
 
 ## Files
 
-    index.html       markup — one <section> per slide
-    styles.css       typography, layout, overview grid, print rules, modes
-    slides.js        mode dispatcher (standalone / live / presenter / control)
-    core.js          shared deck setup + rendering (auto-fit, chapter menu, outline)
-    preview.png      3×3 thumbnail grid (regenerate via `make preview`)
-    slides.example.json    template — copy to slides.json before deploying
-    worker.example.toml    template — copy to worker.toml before deploying
-    worker.js              Cloudflare Worker — path router for your apex
-    slides.json            (gitignored) actual deploy config
-    worker.toml            (gitignored) actual wrangler config
-    Makefile         make pdf / serve / watch / dist / page / worker / preview / clean
-    CLAUDE.md        directs future Claude sessions to the design skill
+    index.html         markup — one <section> per slide
+    styles/            base.css, slides.css, chrome.css, overview.css,
+                       presenter.css, control.css, print.css
+    src/
+      slides.js        mode dispatcher (standalone / live / presenter / control)
+      core.js          shared deck setup + rendering (auto-fit, chapter menu, outline)
+      serve.py         dev server with /presenter /live /control fallback routing
+    docs/
+      preview.png      3×3 thumbnail grid (regenerate via `make preview`)
+      slides.example.json    template — copy to ../slides.json before deploying
+      GOTCHAS.md       hard-won lessons from earlier iterations
+    worker/
+      worker.js              Cloudflare Worker — path router for your apex
+      worker.example.toml    template — copy to worker.toml before deploying
+      worker.toml            (gitignored) actual wrangler config
+    slides.json        (gitignored) actual deploy config
+    Makefile           make pdf / serve / watch / dist / page / worker / preview / clean
+    CLAUDE.md          directs future Claude sessions to the design skill
     .claude/skills/
       slides-design/
-        SKILL.md     full layout catalog, sizing reference, anti-patterns
-    .gitignore       excludes .DS_Store, *.pdf, dist/, .wrangler/
+        SKILL.md       full layout catalog, sizing reference, anti-patterns
+    .gitignore         excludes .DS_Store, *.pdf, dist/, .wrangler/
 
 ## License
 
